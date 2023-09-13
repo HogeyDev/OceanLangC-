@@ -1,0 +1,9 @@
+import "example/io.wv"
+import "example/stdlib.wv"
+
+void main() {
+    int x = 12;
+    int y = x * 4;
+
+    exit(y);
+}
