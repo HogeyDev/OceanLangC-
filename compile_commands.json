@@ -1,0 +1,66 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Werror",
+      "-Wpedantic",
+      "-I./src/include/",
+      "-o",
+      "build/main",
+      "./src/token.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCpp",
+    "file": "/home/kourtet/Programming/OceanLangCpp/src/token.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCpp/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Werror",
+      "-Wpedantic",
+      "-I./src/include/",
+      "-o",
+      "build/main",
+      "./src/main.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCpp",
+    "file": "/home/kourtet/Programming/OceanLangCpp/src/main.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCpp/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Werror",
+      "-Wpedantic",
+      "-I./src/include/",
+      "-o",
+      "build/main",
+      "./src/lexer.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCpp",
+    "file": "/home/kourtet/Programming/OceanLangCpp/src/lexer.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCpp/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Werror",
+      "-Wpedantic",
+      "-I./src/include/",
+      "-o",
+      "build/main",
+      "./src/ocean.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCpp",
+    "file": "/home/kourtet/Programming/OceanLangCpp/src/ocean.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCpp/build/main"
+  }
+]

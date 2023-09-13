@@ -16,6 +16,8 @@ class Lexer {
     Token *lexIdentifier();
     Token *lexInt();
     Token *lexString();
+    Token *advanceWith(Token *token);
+    Token *advanceWith(TokenType type);
     void skipWhitespace();
     void skipComments();
     void advance();

@@ -1,31 +1,15 @@
 CC = g++
-LD = ld
-CCFLAGS = -Wall -Werror -Wpedantic -I./src/include
-LDFLAGS = 
-SRCDIR = src
-OBJDIR = lib
-BUILDDIR = build
+CCFLAGS = -Wall -Werror -Wpedantic -I./src/include/
 
-rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+SRCFILES = $(shell find ./src/ | grep .cpp)
 
-SRCS = $(call rwildcard,$(SRCDIR),*.cpp)          
-OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+all: compile run test
 
-.PHONY: clean
-
-all: $(OBJS) link run
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@echo COMPILING $^
-	@mkdir -p $(@D)
-	$(CC) $(CCFLAGS) -c $^ -o $@
-
-link:
-	@echo LINKING
-	$(LD) $(LDFLAGS) -o $(BUILDDIR)/main $(OBJS)
+compile: $(SRCFILES)
+	$(CC) $(CCFLAGS) $(SRCFILES) -o build/main
 
 run:
 	./build/main example/main.ocn
 
-clean:
-	rm build/main
-	rm lib/*.o
+test:
+	./build/example/main

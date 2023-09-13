@@ -14,9 +14,16 @@ void Lexer::advance() {
         }
         this->character = this->source[++this->index];
     }
-    if (this->character == ' ') {
-        return;
-    }
+}
+
+Token *Lexer::advanceWith(Token *token) {
+    this->advance();
+    return token;
+}
+
+Token *Lexer::advanceWith(TokenType type) {
+    this->advance();
+    return new Token("", type);
 }
 
 Token *Lexer::nextToken() {

@@ -1,4 +1,4 @@
-#include "include/token.h"
+#include "token.h"
 
 std::string getTokenType(TokenType type) {
     static const std::string values[]{
