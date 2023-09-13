@@ -1,5 +1,5 @@
-#include "include/lexer.h"
-#include "include/token.h"
+#include "lexer.h"
+#include "token.h"
 #include <cctype>
 #include <iostream>
 #include <string>
@@ -14,6 +14,9 @@ void Lexer::advance() {
         }
         this->character = this->source[++this->index];
     }
+    if (this->character == ' ') {
+        return;
+    }
 }
 
 Token *Lexer::nextToken() {
@@ -22,9 +25,9 @@ Token *Lexer::nextToken() {
 
     if (std::isalpha(this->character)) {
         std::cout << "I'm an identifier!" << std::endl;
-		Token *id = this->lexIdentifier();
-		std::cout << id->value << std::endl;
-		std::cout << getPrintableToken(id) << std::endl;
+        Token *id = this->lexIdentifier();
+        std::cout << id->value << std::endl;
+        std::cout << getPrintableToken(id) << std::endl;
         return id;
     }
 

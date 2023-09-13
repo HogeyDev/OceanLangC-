@@ -1,0 +1,10 @@
+.ccls-cache/
+.breakpoints/
+build/
+.vscode/
+main
+main-debug
+replit.nix
+.replit
+
+**/*.o

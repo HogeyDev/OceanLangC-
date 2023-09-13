@@ -1,17 +1,31 @@
-all: main
+CC = g++
+LD = ld
+CCFLAGS = -Wall -Werror -Wpedantic -I./src/include
+LDFLAGS = 
+SRCDIR = src
+OBJDIR = lib
+BUILDDIR = build
 
-CXX = clang++
-override CXXFLAGS += -g -Wno-everything -Wall -Werror -Wpedantic
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-SRCS = $(shell find ./src/ | grep .cpp)
-HEADERS = $(shell find ./src/ | grep .hpp)
-HEADERS += $(shell find ./src/ | grep .h)
+SRCS = $(call rwildcard,$(SRCDIR),*.cpp)          
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 
-main: $(SRCS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(SRCS) -o "$@"
+.PHONY: clean
 
-main-debug: $(SRCS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) -O0 $(SRCS) -o "$@"
+all: $(OBJS) link run
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@echo COMPILING $^
+	@mkdir -p $(@D)
+	$(CC) $(CCFLAGS) -c $^ -o $@
+
+link:
+	@echo LINKING
+	$(LD) $(LDFLAGS) -o $(BUILDDIR)/main $(OBJS)
+
+run:
+	./build/main example/main.ocn
 
 clean:
-	rm -f main main-debug
+	rm build/main
+	rm lib/*.o
