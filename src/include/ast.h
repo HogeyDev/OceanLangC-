@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <variant>
 #include <vector>
 
 enum OP {
@@ -40,6 +41,6 @@ public:
 class Statement {};
 class Compound {
 public:
-  std::vector<Statement> statements;
+  std::vector<std::variant<Statement *>> statements;
 };
 } // namespace AST

@@ -40,5 +40,5 @@ public:
     }
     return ret;
   }
-  AST::Identifier parseIdentifier() {}
+  AST::Identifier *parseIdentifier() {}
 };

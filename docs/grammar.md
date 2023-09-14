@@ -1,4 +1,4 @@
-Prog -> Stmt*
+<!-- Prog -> Stmt*
 
 Stmt -> exit
       | Expr
@@ -13,4 +13,14 @@ BinExpr -> Expr * Expr
          | Expr - Expr
 
 Term -> int_lit
-      | ident
+      | ident -->
+
+$$
+\begin{align}
+
+[\text{Program}] \to [\text{Compound}] \\
+[\text{Compound}] \to [\text{Statement}]^* \\
+
+
+\end{align}
+$$
