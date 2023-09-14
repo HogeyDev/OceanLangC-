@@ -9,7 +9,7 @@ compile: $(SRCFILES)
 	$(CC) $(CCFLAGS) $(SRCFILES) -o build/main
 
 run:
-	./build/main example/main.ocn
+	./build/main example/main.ocn -o example/main.out
 
 test:
-	./build/example/main
+	./example/main.out
