@@ -20,7 +20,11 @@ $$
 
 [\text{Program}] \to [\text{Compound}] \\
 [\text{Compound}] \to [\text{Statement}]^* \\
-
+[\text{Statement}] \to
+\begin{cases}
+[\text{Assignment}] \\
+[\text{Declaration}]
+\end{cases}
 
 \end{align}
 $$
