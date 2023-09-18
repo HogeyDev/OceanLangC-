@@ -1,11 +1,14 @@
 CC = g++
-CCFLAGS = -Wall -Werror -Wpedantic -I./src/include/ -g
+CCFLAGS = -Wall -Werror -Wpedantic -I ./src/include/ -g -std=c++20
 
 SRCFILES = $(shell find ./src/ | grep .cpp)
 
 all: compile run test
 
-compile: $(SRCFILES)
+setup:
+	mkdir -p build
+
+compile: setup $(SRCFILES)
 	$(CC) $(CCFLAGS) $(SRCFILES) -o build/main
 
 run:

@@ -4,7 +4,6 @@
 #include "lexer.hpp"
 #include "token.hpp"
 #include <iostream>
-#include <type_traits>
 #include <variant>
 #include <vector>
 
@@ -23,7 +22,8 @@ class Parser {
     void errorOut(TokenType type) {
         std::cerr << "Expected Token Of Type: " << getTokenType(type)
                   << ", But Instead Got Type: " << getTokenType(this->currentToken->type) << std::endl;
-        exit(1);
+        std::cerr << "\tCurrent Token: " << getPrintableToken(this->currentToken) << std::endl;
+		exit(1);
     }
     Token* peekToken(size_t offset = 0) {
         if (this->tokenIndex + offset >= this->tokenList.size())
