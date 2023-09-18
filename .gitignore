@@ -1,4 +1,5 @@
 .ccls-cache/
+.cache/
 .breakpoints/
 build/
 .vscode/
@@ -6,5 +7,6 @@ main
 main-debug
 replit.nix
 .replit
+build/
 
 **/*.o

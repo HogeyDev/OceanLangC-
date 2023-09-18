@@ -1,5 +1,5 @@
 CC = g++
-CCFLAGS = -Wall -Werror -Wpedantic -I./src/include/
+CCFLAGS = -Wall -Werror -Wpedantic -I./src/include/ -g
 
 SRCFILES = $(shell find ./src/ | grep .cpp)
 
@@ -13,3 +13,6 @@ run:
 
 test:
 	./example/main.out
+
+debug:
+	gdb --args ./build/main example/main.ocn -o example/main.out

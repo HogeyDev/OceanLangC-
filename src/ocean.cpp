@@ -1,4 +1,4 @@
-#include "ocean.h"
+#include "ocean.hpp"
 #include <fstream>
 #include <string>
 
