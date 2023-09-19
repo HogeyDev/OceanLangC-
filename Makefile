@@ -17,5 +17,8 @@ run:
 test:
 	./example/main.out
 
-debug:
+debug: compile
 	gdb --args ./build/main example/main.ocn -o example/main.out
+
+bear:
+	bear -- make

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast.hpp"
+#include "debug.hpp"
 #include "lexer.hpp"
 #include "token.hpp"
 #include <iostream>
@@ -23,7 +24,7 @@ class Parser {
         std::cerr << "Expected Token Of Type: " << getTokenType(type)
                   << ", But Instead Got Type: " << getTokenType(this->currentToken->type) << std::endl;
         std::cerr << "\tCurrent Token: " << getPrintableToken(this->currentToken) << std::endl;
-		exit(1);
+        exit(1);
     }
     Token* peekToken(size_t offset = 0) {
         if (this->tokenIndex + offset >= this->tokenList.size())
@@ -48,6 +49,9 @@ class Parser {
         return ret;
     }
     AST::Scope* parseScope() {
+        bool isDelimitedByBraces = (this->currentToken->type == TokenType::LBRACE);
+        if (isDelimitedByBraces)
+            this->consume(TokenType::LBRACE);
         AST::Scope* scope = new AST::Scope();
         while (this->currentToken->type != TokenType::ENDOFFILE) {
             AST::Statement* statement = new AST::Statement();
@@ -66,6 +70,7 @@ class Parser {
             } else if (this->currentToken->type == TokenType::IDENTIFIER &&
                        this->peekToken(1)->type == TokenType::IDENTIFIER &&
                        this->peekToken(2)->type == TokenType::LPAREN) {
+                // function declaration
                 AST::FunctionDeclaration* ast = new AST::FunctionDeclaration();
                 ast->type = getPrimType(this->currentToken->value);
                 this->consume(TokenType::IDENTIFIER);
@@ -75,9 +80,7 @@ class Parser {
                 this->consume(TokenType::LPAREN);
                 // parse arguments right here (when i want to ofc)
                 this->consume(TokenType::RPAREN);
-                this->consume(TokenType::LBRACE);
                 ast->value = this->parseScope();
-                this->consume(TokenType::RBRACE);
                 statement->var = ast;
             } else if (this->currentToken->value == "import") {
                 AST::Import* ast = new AST::Import();
@@ -94,7 +97,13 @@ class Parser {
                 ast->functionName = name;
                 this->consume(TokenType::IDENTIFIER);
                 this->consume(TokenType::LPAREN);
+                ast->arguments = this->parseArguments();
                 this->consume(TokenType::RPAREN);
+                this->consume(TokenType::SEMICOLON);
+                statement->var = ast;
+            } else if (this->currentToken->type == TokenType::RBRACE && isDelimitedByBraces) {
+                this->consume(TokenType::RBRACE);
+                break;
             } else {
                 std::cerr << "No matching AST parse method for token: " << getPrintableToken(this->currentToken)
                           << std::endl;
@@ -103,6 +112,23 @@ class Parser {
             scope->statements.push_back(statement);
         }
         return scope;
+    }
+    std::vector<AST::Expression*> parseArguments() {
+        std::vector<AST::Expression*> arguments;
+
+        bool stillParsingArguments = true;
+        while (stillParsingArguments) {
+
+            AST::Expression* argument = this->parseExpression();
+            if (this->currentToken->type == TokenType::COMMA) {
+                this->consume(TokenType::COMMA);
+            } else {
+                stillParsingArguments = false;
+            }
+            arguments.push_back(argument);
+        }
+
+        return arguments;
     }
     AST::Expression* parseExpression(int minimumPrecedence = 0) {
         AST::Term* lhsTerm = this->parseTerm();
@@ -118,8 +144,7 @@ class Parser {
         while (true) {
             int precedence = getOperatorPrecedence(this->currentToken->value);
 
-            if (isBinaryOperation(this->currentToken->value) ||
-                getOperatorPrecedence(this->currentToken->value) < minimumPrecedence) {
+            if (!isBinaryOperation(this->currentToken->value) || precedence < minimumPrecedence) {
                 break;
             }
 
@@ -158,6 +183,14 @@ class Parser {
             AST::Expression* expression = this->parseExpression();
             this->consume(TokenType::RPAREN);
             ast->var = expression;
+        } else if (this->currentToken->type == TokenType::IDENTIFIER) {
+            AST::Identifier* identifier = new AST::Identifier();
+            identifier->value = this->currentToken->value;
+            this->consume(TokenType::IDENTIFIER);
+            ast->var = identifier;
+        } else {
+            std::cerr << "Term Cannot Be Of Type: " << getTokenType(this->currentToken->type) << std::endl;
+            exit(1);
         }
 
         return ast;

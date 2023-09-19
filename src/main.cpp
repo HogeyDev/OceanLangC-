@@ -1,3 +1,5 @@
+#include "ast.hpp"
+#include "debug.hpp"
 #include "lexer.hpp"
 #include "ocean.hpp"
 #include "parser.hpp"
@@ -19,7 +21,8 @@ int main(int argc, char* argv[]) {
         std::cout << getPrintableToken(t) << std::endl;
     std::cout << std::endl;
     Parser* parser = new Parser(tokenList);
-    parser->parse();
+    AST::Program* program = parser->parse();
+    std::cout << DEBUG::getPrintableProgram(program) << std::endl;
 
     return 0;
 }

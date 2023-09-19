@@ -18,6 +18,7 @@ enum TokenType {
     MINUS,
     SLASH,
     EQUALS,
+    COMMA,
 };
 
 class Token {

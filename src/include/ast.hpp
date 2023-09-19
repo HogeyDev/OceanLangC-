@@ -67,6 +67,15 @@ inline PrimType getPrimType(std::string value) {
     }
 }
 
+inline std::string getPrintablePrimType(PrimType type) {
+    static const std::string values[] = {
+        "int",
+        "str",
+        "void",
+    };
+    return values[type];
+}
+
 inline bool isBinaryOperation(std::string value) {
     if (value.size() > 1)
         return 0;
@@ -99,6 +108,7 @@ class Program;
 class Scope;
 class Statement;
 class VariableAssignment;
+class VariableRecall;
 class Expression;
 class Term;
 class BinaryExpression;
@@ -131,6 +141,11 @@ class VariableAssignment {
     Expression* value;
 };
 
+class VariableRecall {
+  public:
+    Identifier* variableName;
+};
+
 class Expression {
   public:
     std::variant<Term*, BinaryExpression*> var;
@@ -138,7 +153,7 @@ class Expression {
 
 class Term {
   public:
-    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*> var;
+    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*, VariableRecall*> var;
 };
 
 class BinaryExpression {
@@ -158,6 +173,7 @@ class FunctionDeclaration {
 class FunctionCall {
   public:
     Identifier* functionName;
+    std::vector<Expression*> arguments;
 };
 
 class IntegerLiteral {
