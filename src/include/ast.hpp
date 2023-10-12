@@ -118,82 +118,93 @@ class IntegerLiteral;
 class Identifier;
 class StringLiteral;
 class Import;
+class Extern;
 
 class Program {
-  public:
+public:
     Scope* scope;
 };
 
 class Scope {
-  public:
+public:
     std::vector<Statement*> statements;
 };
 
 class Statement {
-  public:
-    std::variant<VariableAssignment*, FunctionDeclaration*, FunctionCall*, Import*> var;
+public:
+    std::variant<VariableAssignment*, FunctionDeclaration*, FunctionCall*,
+                 Import*, Extern*>
+        var;
 };
 
 class VariableAssignment {
-  public:
+public:
     PrimType type;
     Identifier* variableName;
     Expression* value;
 };
 
 class VariableRecall {
-  public:
+public:
     Identifier* variableName;
 };
 
 class Expression {
-  public:
+public:
     std::variant<Term*, BinaryExpression*> var;
 };
 
 class Term {
-  public:
-    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*, VariableRecall*> var;
+public:
+    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*,
+                 VariableRecall*>
+        var;
 };
 
 class BinaryExpression {
-  public:
+public:
     Expression* lhs;
     Expression* rhs;
     OP operation;
 };
 
 class FunctionDeclaration {
-  public:
+public:
     PrimType type;
     Identifier* functionName;
     Scope* value;
 };
 
 class FunctionCall {
-  public:
+public:
     Identifier* functionName;
     std::vector<Expression*> arguments;
 };
 
 class IntegerLiteral {
-  public:
+public:
     int value;
 };
 
 class Identifier {
-  public:
+public:
     std::string value;
 };
 
 class StringLiteral {
-  public:
+public:
     std::string value;
 };
 
 class Import {
-  public:
+public:
     std::string filePath;
+};
+
+class Extern {
+public:
+    std::string language;
+    std::string code;
 };
 
 } // namespace AST

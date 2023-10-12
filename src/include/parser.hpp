@@ -13,7 +13,7 @@ class Parser {
     size_t tokenIndex;
     Token* currentToken;
 
-  public:
+public:
     Parser(std::vector<Token*> tokenList) {
         this->tokenList = tokenList;
         this->tokenIndex = 0;
@@ -22,8 +22,10 @@ class Parser {
     }
     void errorOut(TokenType type) {
         std::cerr << "Expected Token Of Type: " << getTokenType(type)
-                  << ", But Instead Got Type: " << getTokenType(this->currentToken->type) << std::endl;
-        std::cerr << "\tCurrent Token: " << getPrintableToken(this->currentToken) << std::endl;
+                  << ", But Instead Got Type: "
+                  << getTokenType(this->currentToken->type) << std::endl;
+        std::cerr << "\tCurrent Token: "
+                  << getPrintableToken(this->currentToken) << std::endl;
         exit(1);
     }
     Token* peekToken(size_t offset = 0) {
@@ -49,24 +51,39 @@ class Parser {
         return ret;
     }
     AST::Scope* parseScope() {
-        bool isDelimitedByBraces = (this->currentToken->type == TokenType::LBRACE);
+        bool isDelimitedByBraces =
+            (this->currentToken->type == TokenType::LBRACE);
         if (isDelimitedByBraces)
             this->consume(TokenType::LBRACE);
         AST::Scope* scope = new AST::Scope();
         while (this->currentToken->type != TokenType::ENDOFFILE) {
             AST::Statement* statement = new AST::Statement();
             if (this->currentToken->type == TokenType::IDENTIFIER &&
-                this->peekToken(1)->type == TokenType::IDENTIFIER && this->peekToken(2)->type == TokenType::EQUALS) {
-                // Variable Assignment
-                AST::VariableAssignment* ast = new AST::VariableAssignment();
-                ast->type = getPrimType(this->currentToken->value);
-                this->consume(TokenType::IDENTIFIER);
-                ast->variableName = new AST::Identifier();
-                ast->variableName->value = this->currentToken->value;
-                this->consume(TokenType::IDENTIFIER);
-                this->consume(TokenType::EQUALS);
-                ast->value = this->parseExpression();
-                statement->var = ast;
+                this->peekToken(1)->type == TokenType::IDENTIFIER &&
+                this->peekToken(2)->type == TokenType::EQUALS) {
+                if (this->currentToken->value == "extern") {
+                    // Extern Statement
+                    AST::Extern* ast = new AST::Extern();
+                    this->consume(TokenType::IDENTIFIER);
+                    ast->language = this->currentToken->value;
+                    this->consume(TokenType::IDENTIFIER);
+                    this->consume(TokenType::EQUALS);
+                    ast->code = this->currentToken->value;
+                    this->consume(TokenType::STRING);
+                    statement->var = ast;
+                } else {
+                    // Variable Assignment
+                    AST::VariableAssignment* ast =
+                        new AST::VariableAssignment();
+                    ast->type = getPrimType(this->currentToken->value);
+                    this->consume(TokenType::IDENTIFIER);
+                    ast->variableName = new AST::Identifier();
+                    ast->variableName->value = this->currentToken->value;
+                    this->consume(TokenType::IDENTIFIER);
+                    this->consume(TokenType::EQUALS);
+                    ast->value = this->parseExpression();
+                    statement->var = ast;
+                }
             } else if (this->currentToken->type == TokenType::IDENTIFIER &&
                        this->peekToken(1)->type == TokenType::IDENTIFIER &&
                        this->peekToken(2)->type == TokenType::LPAREN) {
@@ -101,12 +118,13 @@ class Parser {
                 this->consume(TokenType::RPAREN);
                 this->consume(TokenType::SEMICOLON);
                 statement->var = ast;
-            } else if (this->currentToken->type == TokenType::RBRACE && isDelimitedByBraces) {
+            } else if (this->currentToken->type == TokenType::RBRACE &&
+                       isDelimitedByBraces) {
                 this->consume(TokenType::RBRACE);
                 break;
             } else {
-                std::cerr << "No matching AST parse method for token: " << getPrintableToken(this->currentToken)
-                          << std::endl;
+                std::cerr << "No matching AST parse method for token: "
+                          << getPrintableToken(this->currentToken) << std::endl;
                 exit(1);
             }
             scope->statements.push_back(statement);
@@ -144,7 +162,8 @@ class Parser {
         while (true) {
             int precedence = getOperatorPrecedence(this->currentToken->value);
 
-            if (!isBinaryOperation(this->currentToken->value) || precedence < minimumPrecedence) {
+            if (!isBinaryOperation(this->currentToken->value) ||
+                precedence < minimumPrecedence) {
                 break;
             }
 
@@ -152,8 +171,10 @@ class Parser {
             this->nextToken();
             int nextMinimumPrecedence = precedence + 1;
 
-            AST::Expression* rhsExpression = this->parseExpression(nextMinimumPrecedence);
-            AST::BinaryExpression* binaryExpression = new AST::BinaryExpression();
+            AST::Expression* rhsExpression =
+                this->parseExpression(nextMinimumPrecedence);
+            AST::BinaryExpression* binaryExpression =
+                new AST::BinaryExpression();
             AST::Expression* binaryExpressionLhs = new AST::Expression();
 
             binaryExpressionLhs->var = lhsExpression->var;
@@ -189,7 +210,8 @@ class Parser {
             this->consume(TokenType::IDENTIFIER);
             ast->var = identifier;
         } else {
-            std::cerr << "Term Cannot Be Of Type: " << getTokenType(this->currentToken->type) << std::endl;
+            std::cerr << "Term Cannot Be Of Type: "
+                      << getTokenType(this->currentToken->type) << std::endl;
             exit(1);
         }
 
