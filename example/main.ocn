@@ -1,7 +1,9 @@
 import "example/io.wv"
 import "example/stdlib.wv"
 
-void main() {
+int main() {
+    str x = "Hello, World!";
     int y = 12;
+    print(x);
     exit(y);
 }

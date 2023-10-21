@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     // create binary
     writeFile("example/main.asm", compiledCode);
     int res = system("nasm -f elf64 example/main.asm -o example/main.o");
-    res = system("ld -m elf_x86_64 example/main.o -o example/main.out");
+    res = system("ld -m elf_x86_64 example/main.o -o example/main.out -e main");
     res = system("rm example/main.o");
     if (!outputAssemblyFile)
         res = system("rm example/main.asm");

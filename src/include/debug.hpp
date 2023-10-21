@@ -15,7 +15,6 @@ std::string getPrintableFunctionDeclaration(AST::FunctionDeclaration* ast,
                                             int tabs = 0);
 std::string getPrintableIntegerLiteral(AST::IntegerLiteral* ast, int tabs = 0);
 std::string getPrintableStringLiteral(AST::StringLiteral* ast, int tabs = 0);
-std::string getPrintableVariableRecall(AST::VariableRecall* ast, int tabs = 0);
 std::string getPrintableTerm(AST::Term* ast, int tabs = 0);
 std::string getPrintableBinaryExpression(AST::BinaryExpression* ast,
                                          int tabs = 0);

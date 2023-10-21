@@ -108,7 +108,6 @@ class Program;
 class Scope;
 class Statement;
 class VariableAssignment;
-class VariableRecall;
 class Expression;
 class Term;
 class BinaryExpression;
@@ -144,11 +143,6 @@ public:
     Expression* value;
 };
 
-class VariableRecall {
-public:
-    Identifier* variableName;
-};
-
 class Expression {
 public:
     std::variant<Term*, BinaryExpression*> var;
@@ -156,9 +150,7 @@ public:
 
 class Term {
 public:
-    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*,
-                 VariableRecall*>
-        var;
+    std::variant<IntegerLiteral*, Identifier*, StringLiteral*, Expression*> var;
 };
 
 class BinaryExpression {

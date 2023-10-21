@@ -42,10 +42,18 @@ public:
             std::string& compiled;
             AsmFrontend* asmFrontend;
             void operator()(AST::VariableAssignment* variableAssignment) {
-                if (variableAssignment->type == PrimType::INT)
+                if (variableAssignment->type == PrimType::INT) {
                     compiled += asmFrontend->compileExpression(
                         variableAssignment->value);
-                compiled += asmFrontend->push("rax");
+                } else if (variableAssignment->type == PrimType::STR) {
+                    exit(101);
+                } else {
+                    std::cerr << "Unrecognized variable type: "
+                              << getPrintablePrimType(variableAssignment->type)
+                              << std::endl;
+                    exit(1);
+                }
+                // compiled += asmFrontend->push("rax");
                 asmFrontend->addVariable(
                     variableAssignment->variableName->value);
             }
@@ -53,11 +61,11 @@ public:
                 compiled += "global " +
                             functionDeclaration->functionName->value + "\n" +
                             functionDeclaration->functionName->value + ":\n" +
-                            "push rbp\nmov rbp, rsp\n";
+                            "    push rbp\n    mov rbp, rsp\n";
                 compiled +=
                     asmFrontend->compileScope(functionDeclaration->value);
 
-                compiled += "mov rsp, rbp\npop rbp\nret\n";
+                compiled += "    mov rsp, rbp\n    pop rbp\n    ret\n";
             }
             void operator()(AST::FunctionCall* functionCall) {
                 for (unsigned int i = 0; i < functionCall->arguments.size();
@@ -65,6 +73,8 @@ public:
                     compiled += asmFrontend->compileExpression(
                         functionCall->arguments.at(i));
                 }
+                compiled +=
+                    "    call " + functionCall->functionName->value + "\n";
             }
             void operator()(AST::Import* importStatement) {
                 compiled += oceanCompile(importStatement->filePath);
@@ -87,11 +97,11 @@ public:
     }
     std::string push(std::string registerName) {
         this->stackSize++;
-        return "push " + registerName + "\n";
+        return "    push " + registerName + "\n";
     }
     std::string pop(std::string registerName) {
         this->stackSize--;
-        return "pop " + registerName + "\n";
+        return "    pop " + registerName + "\n";
     }
     std::string compileExpression(AST::Expression* expression) {
         std::string compiled;
@@ -102,7 +112,9 @@ public:
             void operator()(AST::Term* term) {
                 compiled += asmFrontend->compileTerm(term);
             }
-            void operator()(AST::BinaryExpression* binaryExpression) {}
+            void operator()(AST::BinaryExpression* binaryExpression) {
+                exit(101);
+            }
         };
 
         ExpressionVisitor visitor = {.compiled = compiled, .asmFrontend = this};
@@ -115,30 +127,30 @@ public:
 
         struct TermVisitor {
             std::string& compiled;
-            AsmFrontend* asmFrontend;
+            AsmFrontend& asmFrontend;
             void operator()(AST::IntegerLiteral* integerLiteral) {
-                compiled +=
-                    "mov rax, " + std::to_string(integerLiteral->value) + "\n";
-                compiled += asmFrontend->push("rax");
+                compiled += "    mov rax, " +
+                            std::to_string(integerLiteral->value) + "\n";
+                compiled += asmFrontend.push("rax");
             }
             void operator()(AST::Identifier* identifier) {
-                int index = asmFrontend->getVariableOffset(identifier->value);
+                int index = asmFrontend.getVariableOffset(identifier->value);
                 if (index < 0) {
                     std::cerr << "Could not find variable \"" +
                                      identifier->value + "\" in scope"
                               << std::endl;
                     exit(1);
                 }
-                asmFrontend->push(
+                compiled += asmFrontend.push(
                     "QWORD [rsp + " +
-                    std::to_string(asmFrontend->stackSize - index) + "]\n");
+                    std::to_string((asmFrontend.stackSize - index - 1) * 8) +
+                    "]");
             }
             void operator()(AST::StringLiteral*) {}
             void operator()(AST::Expression*) {}
-            void operator()(AST::VariableRecall*) {}
         };
 
-        TermVisitor visitor = {.compiled = compiled, .asmFrontend = this};
+        TermVisitor visitor = {.compiled = compiled, .asmFrontend = *this};
         std::visit(visitor, term->var);
 
         return compiled;

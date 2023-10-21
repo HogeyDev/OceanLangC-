@@ -41,11 +41,12 @@ exit:
     syscall
 global main
 main:
-push rbp
-mov rbp, rsp
-mov rax, 12
-push rax
-push rax
-mov rsp, rbp
-pop rbp
-ret
+    push rbp
+    mov rbp, rsp
+    mov rax, 12
+    push rax
+    push QWORD [rsp + 0]
+    call exit
+    mov rsp, rbp
+    pop rbp
+    ret

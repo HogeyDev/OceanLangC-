@@ -43,12 +43,6 @@ std::string getPrintableStringLiteral(AST::StringLiteral* ast, int tabs) {
     return calculateTabs(tabs) + "StringLiteral(value: " + ast->value + ")";
 }
 
-std::string getPrintableVariableRecall(AST::VariableRecall* ast, int tabs) {
-    return calculateTabs(tabs) + "VariableRecall(variableName:\n" +
-           getPrintableIdentifier(ast->variableName, tabs + 1) + "\n" +
-           calculateTabs(tabs) + ")";
-}
-
 std::string getPrintableTerm(AST::Term* ast, int tabs) {
     std::string ret;
     struct TermVisitor {
@@ -65,9 +59,6 @@ std::string getPrintableTerm(AST::Term* ast, int tabs) {
         }
         void operator()(AST::Expression* ast) {
             ret += getPrintableExpression(ast, tabs);
-        }
-        void operator()(AST::VariableRecall* ast) {
-            ret += getPrintableVariableRecall(ast, tabs);
         }
     };
     TermVisitor visitor = {.ret = ret, .tabs = tabs};
